@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Master - Todo List App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Splash Screen with Logo Animation -->
+  <div id="splashScreen" class="splash-screen">
+    <div class="splash-content">
+      <h1 class="splash-logo">
+        <span class="splash-icon">📝</span>
+        <span class="splash-text">Task Master</span>
+      </h1>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <h1 class="logo" data-action="navigate" data-page="home">
+        <span class="logo-icon">📝</span>
+        <span class="logo-text">Task Master</span>
+      </h1>
+      <ul class="nav-menu">
+        <li><a href="#home" data-action="navigate" data-page="home">Home</a></li>
+        <li><a href="#tasks" data-action="navigate" data-page="tasks">Tasks</a></li>
+        <li><a href="#features" data-action="navigate" data-page="features">Features</a></li>
+        <li><a href="#settings" data-action="navigate" data-page="settings">Settings</a></li>
+        <li><a href="#about" data-action="navigate" data-page="about">About</a></li>
+        <li><a href="#contact" data-action="navigate" data-page="contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Page Container -->
+  <div id="pageContainer" class="page-container">
+    
+    <!-- HOME PAGE -->
+    <div id="home-page" class="page" data-page="home">
+      <div class="page-hero">
+        <h1>Welcome to Task Master</h1>
+        <p>Your intelligent voice-controlled task management companion</p>
+        <div class="hero-buttons">
+          <button class="btn-primary" data-action="navigate" data-page="tasks">Start Managing Tasks</button>
+          <button class="btn-secondary" data-action="navigate" data-page="features">Learn More</button>
+        </div>
+      </div>
+      <div class="home-features">
+        <div class="feature-card">
+          <h3>🎤 Voice Control</h3>
+          <p>Control your tasks using natural voice commands. Just speak and the app listens!</p>
+        </div>
+        <div class="feature-card">
+          <h3>⚡ Lightning Fast</h3>
+          <p>Instant task creation, deletion, and management with minimal latency.</p>
+        </div>
+        <div class="feature-card">
+          <h3>💾 Always Saved</h3>
+          <p>Your tasks are automatically saved and persist across sessions.</p>
+        </div>
+        <div class="feature-card">
+          <h3>🎨 Beautiful UI</h3>
+          <p>Modern, responsive design that works on desktop and mobile devices.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASKS PAGE (Main Todo App) -->
+    <div id="tasks-page" class="page" data-page="tasks">
+      <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <div class="sidebar-card">
+            <h3>📊 Statistics</h3>
+            <div class="stat">
+              <span class="stat-label">Total Tasks</span>
+              <span class="stat-value" id="totalTasks">0</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Active</span>
+              <span class="stat-value active" id="activeTasks">0</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Completed</span>
+              <span class="stat-value completed" id="completedTasks">0</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Deleted</span>
+              <span class="stat-value deleted" id="deletedTasks">0</span>
+            </div>
+          </div>
+
+          <div class="sidebar-card">
+            <h3>🎯 Priority Filter</h3>
+            <button class="priority-btn" data-action="filter" data-priority="all" id="priorAll">All</button>
+            <button class="priority-btn" data-action="filter" data-priority="high" id="priorHigh">🔴 High</button>
+            <button class="priority-btn" data-action="filter" data-priority="medium" id="priorMedium">🟡 Medium</button>
+            <button class="priority-btn" data-action="filter" data-priority="low" id="priorLow">🟢 Low</button>
+          </div>
+
+          <div class="sidebar-card">
+            <h3>⚙️ Actions</h3>
+            <button class="action-btn" data-action="clear-completed" title="Delete all completed tasks">✓ Clear Completed</button>
+            <button class="action-btn danger" data-action="empty-trash" title="Permanently delete all deleted tasks">🗑️ Empty Trash</button>
+            <button class="action-btn danger" data-action="clear-all" title="Delete all tasks permanently">❌ Delete All Tasks</button>
+          </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+          <!-- Input Section -->
+          <section class="input-section">
+            <h2>Create New Task</h2>
+            <form onsubmit="addTask(event)">
+              <div class="input-group">
+                <input 
+                  type="text" 
+                  id="taskInput" 
+                  class="task-input" 
+                  placeholder="What needs to be done? 🤔"
+                  autocomplete="off"
+                >
+                <select id="prioritySelect" class="priority-select">
+                  <option value="low">🟢 Low</option>
+                  <option value="medium" selected>🟡 Medium</option>
+                  <option value="high">🔴 High</option>
+                </select>
+                <button type="submit" class="add-btn">➕ Add Task</button>
+              </div>
+              <div class="reminder-row" style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                <label style="display:flex;align-items:center;gap:8px;color:var(--text-muted)">
+                  <input type="checkbox" id="reminderToggle"> Set reminder
+                </label>
+                <input id="reminderInput" type="datetime-local" style="padding:8px;border-radius:8px;border:1px solid var(--border);background:rgba(15,23,42,0.6);color:var(--text);" aria-label="Reminder date and time">
+                <label style="display:flex;align-items:center;gap:8px;color:var(--text-muted)">
+                  <input type="checkbox" id="reminderEmailToggle"> Send email at reminder
+                </label>
+                <input id="reminderEmailInput" type="email" placeholder="Notify email (optional)" style="padding:8px;border-radius:8px;border:1px solid var(--border);background:rgba(15,23,42,0.6);color:var(--text);min-width:220px" aria-label="Reminder email" disabled>
+              </div>
+            </form>
+          </section>
+
+          <!-- Filter & Search -->
+          <section class="filter-section">
+            <div class="search-box">
+              <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="Search tasks..." 
+                data-action="search"
+              >
+            </div>
+            <div class="sort-options">
+              <button class="sort-btn active" data-action="sort" data-sort="date">📅 Date</button>
+              <button class="sort-btn" data-action="sort" data-sort="priority">🎯 Priority</button>
+              <button class="sort-btn" data-action="sort" data-sort="name">🔤 Name</button>
+            </div>
+          </section>
+
+          <!-- Tasks List -->
+          <section class="tasks-section">
+            <div id="tasksList" class="tasks-list">
+              <div class="empty-state">
+                <p>🎉 No tasks yet. Create one to get started!</p>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- FEATURES PAGE -->
+    <div id="features-page" class="page" data-page="features">
+      <div class="page-content">
+        <h1>Features</h1>
+        <div class="features-grid">
+          <div class="feature-box">
+            <h3>🎤 Voice Commands</h3>
+            <p>Control everything with your voice. Say "add buy milk" or "delete task 1" and it's done instantly.</p>
+          </div>
+          <div class="feature-box">
+            <h3>🔊 Multiple Voice Modes</h3>
+            <p>Choose between Always, Match Only, or Manual voice modes to suit your preferences.</p>
+          </div>
+          <div class="feature-box">
+            <h3>📱 Responsive Design</h3>
+            <p>Works seamlessly on desktop, tablet, and mobile devices with a modern interface.</p>
+          </div>
+          <div class="feature-box">
+            <h3>🎯 Smart Filtering</h3>
+            <p>Filter tasks by status (active, completed, deleted) or priority level.</p>
+          </div>
+          <div class="feature-box">
+            <h3>🔍 Advanced Search</h3>
+            <p>Quickly find any task with instant full-text search across all your tasks.</p>
+          </div>
+          <div class="feature-box">
+            <h3>💾 Local Storage</h3>
+            <p>All your tasks are saved locally in your browser and never leave your device.</p>
+          </div>
+          <div class="feature-box">
+            <h3>🌙 Beautiful UI</h3>
+            <p>Dark mode with gradient accents and smooth animations for a delightful experience.</p>
+          </div>
+          <div class="feature-box">
+            <h3>⚡ Lightning Fast</h3>
+            <p>Instant response times and smooth transitions make task management a breeze.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS PAGE -->
+    <div id="settings-page" class="page" data-page="settings">
+      <div class="page-content">
+        <h1>Settings</h1>
+        <div class="settings-panel">
+          <div class="setting-group">
+            <h3>Voice Settings</h3>
+            <div class="setting-item">
+              <label>Voice Responses</label>
+              <button id="voiceToggleBtn" class="toggle-btn" data-action="toggle-voice">Enabled</button>
+            </div>
+            <div class="setting-item">
+              <label>Speech Mode</label>
+              <p class="setting-description" id="speechModeDisplay">Match Only - Speak on successful commands</p>
+              <button class="btn-secondary" data-action="navigate" data-page="tasks">Configure in Tasks</button>
+            </div>
+            <div class="setting-item">
+              <label>Auto-Stop After Action</label>
+              <button id="autoStopToggleBtn" class="toggle-btn" data-action="toggle-auto-stop">Enabled</button>
+            </div>
+          </div>
+
+          <div class="setting-group">
+            <h3>Data Management</h3>
+            <div class="setting-item">
+              <label>Export Tasks</label>
+              <button class="btn-secondary" data-action="export-tasks">📥 Export as JSON</button>
+            </div>
+            <div class="setting-item">
+              <label>Clear All Data</label>
+              <button class="btn-danger" data-action="clear-all-data">🗑️ Delete Everything</button>
+            </div>
+
+            <div class="setting-item" style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+              <label style="font-weight:700">Email reminder (optional)</label>
+              <input id="emailServiceId" placeholder="EmailJS Service ID" style="padding:8px;border-radius:8px;border:1px solid var(--border);background:rgba(15,23,42,0.6);color:var(--text);">
+              <input id="emailTemplateId" placeholder="EmailJS Template ID" style="padding:8px;border-radius:8px;border:1px solid var(--border);background:rgba(15,23,42,0.6);color:var(--text);">
+              <input id="emailUserId" placeholder="EmailJS User ID (public key)" style="padding:8px;border-radius:8px;border:1px solid var(--border);background:rgba(15,23,42,0.6);color:var(--text);">
+              <input id="emailFrom" placeholder="From email (optional)" style="padding:8px;border-radius:8px;border:1px solid var(--border);background:rgba(15,23,42,0.6);color:var(--text);">
+              <input id="emailTo" placeholder="Recipient email (default)" style="padding:8px;border-radius:8px;border:1px solid var(--border);background:rgba(15,23,42,0.6);color:var(--text);">
+              <div style="display:flex;gap:8px">
+                <button class="btn-primary" data-action="save-email-settings">Save Email Settings</button>
+                <button class="btn-secondary" data-action="test-email-settings">Test Email</button>
+              </div>
+              <div id="emailSettingsNote" style="color:var(--text-muted);font-size:0.9em;margin-top:6px"></div>
+            </div>
+          </div>
+
+          <div class="setting-group">
+            <h3>About</h3>
+            <p>Task Master v1.0</p>
+            <p>An intelligent voice-controlled task management app.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT PAGE -->
+    <div id="about-page" class="page" data-page="about">
+      <div class="page-content">
+        <h1>About Task Master</h1>
+        <div class="about-content">
+          <div class="about-section">
+            <h2>What is Task Master?</h2>
+            <p>Task Master is an intelligent, voice-controlled task management application designed to make organizing your daily tasks simple, fast, and intuitive.</p>
+          </div>
+
+          <div class="about-section">
+            <h2>Our Mission</h2>
+            <p>We believe that task management should be accessible to everyone. With advanced voice recognition and natural language processing, Task Master makes it effortless to stay organized—no matter how busy you are.</p>
+          </div>
+
+          <div class="about-section">
+            <h2>Key Features</h2>
+            <ul>
+              <li>🎤 Voice-controlled task management</li>
+              <li>🔊 Multiple speaking modes</li>
+              <li>📱 Responsive, modern design</li>
+              <li>💾 Secure local storage</li>
+              <li>⚡ Lightning-fast performance</li>
+              <li>🌙 Beautiful dark theme</li>
+            </ul>
+          </div>
+
+          <div class="about-section">
+            <h2>Technology</h2>
+            <p>Task Master is built with:</p>
+            <ul>
+              <li>HTML5 for semantic markup</li>
+              <li>CSS3 for beautiful, responsive design</li>
+              <li>Vanilla JavaScript for fast, dependency-free logic</li>
+              <li>Web Speech API for voice recognition and synthesis</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTACT PAGE -->
+    <div id="contact-page" class="page" data-page="contact">
+      <div class="page-content">
+        <h1>Contact Us</h1>
+        <div class="contact-container">
+          <div class="contact-info">
+            <h2>Get in Touch</h2>
+            <p>Have a question or suggestion? We'd love to hear from you!</p>
+            
+            <div class="contact-item">
+              <h3>📧 Email</h3>
+              <p><a href="mailto:support@taskmaster.app">support@taskmaster.app</a></p>
+            </div>
+
+            <div class="contact-item">
+              <h3>🌐 Website</h3>
+              <p><a href="https://taskmaster.app" target="_blank">www.taskmaster.app</a></p>
+            </div>
+
+            <div class="contact-item">
+              <h3>💬 Feedback</h3>
+              <p>Share your feedback and help us improve Task Master!</p>
+            </div>
+          </div>
+
+          <div class="contact-form">
+            <h2>Send us a Message</h2>
+            <form id="contactForm">
+              <div class="form-group">
+                <input type="text" placeholder="Your Name" required>
+              </div>
+              <div class="form-group">
+                <input type="email" placeholder="Your Email" required>
+              </div>
+              <div class="form-group">
+                <textarea placeholder="Your Message" rows="5" required></textarea>
+              </div>
+              <button type="submit" class="btn-primary">Send Message</button>
+            </form>
+            <p class="form-note" id="formNote"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Floating Mic Button -->
+  <div class="ai-controls">
+      <!-- Live transcript preview (shows what the assistant hears) -->
+      <div id="transcriptPreview" class="transcript-preview" aria-live="polite" aria-atomic="true"></div>
+
+      <button 
+        id="aiAssistantBtn" 
+        class="ai-assistant-btn" 
+        title="AI Assistant - Press Space or Click"
+        aria-label="AI Voice Assistant"
+        aria-pressed="false"
+      >
+        🤖
+      </button>
+
+  </div>
+
+  <!-- AI Assistant Status Display -->
+  <div id="assistantStatus" class="assistant-status">
+    <div class="status-indicator"></div>
+    <span id="statusText">Ready</span>
+  </div>
+
+  <!-- Live transcript preview (shows what the assistant hears) -->
+    <!-- transcript moved into ai-controls -->
+
+  <!-- Status Announcer for Screen Readers -->
+  <div id="voiceStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Modal for Task Details -->
+  <div id="taskModal" class="modal">
+    <div class="modal-content">
+      <span class="close" data-action="close-modal">&times;</span>
+      <h2 id="modalTitle">Task Details</h2>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Help Modal -->
+  <div id="helpModal" class="modal">
+    <div class="modal-content help-content">
+      <span class="close" data-action="close-help">&times;</span>
+      <h2>📖 How to Use Task Master</h2>
+      
+      <div class="help-section">
+        <h3>🎤 How to Use Voice Commands</h3>
+        <div class="help-instruction">
+          <p><strong>Quick Start:</strong></p>
+          <ol>
+            <li>Click the 🤖 mic button or press <code>Space</code></li>
+            <li>Say a command like "add buy milk" or "delete 1"</li>
+            <li>The task is completed instantly</li>
+            <li>Press <code>Space</code> or say "done" to stop</li>
+          </ol>
+        </div>
+    <!-- EmailJS SDK (optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
+
+      </div>
+
+      <div class="help-section">
+        <h3>📋 Adding Tasks</h3>
+        <div class="help-instruction">
+          <p><strong>Voice:</strong> "add [task name] [priority]"</p>
+          <p><strong>Examples:</strong></p>
+          <ul>
+            <li>"add buy milk" - Creates with medium priority</li>
+            <li>"add call doctor high" - Creates with high priority</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <h3>❌ Deleting Tasks</h3>
+        <div class="help-instruction">
+          <p><strong>Voice:</strong> "delete [task number]"</p>
+          <p><strong>Examples:</strong></p>
+          <ul>
+            <li>"delete 1" - Deletes first task</li>
+            <li>"delete 3" - Deletes third task</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <h3>✅ Completing Tasks</h3>
+        <div class="help-instruction">
+          <p><strong>Voice:</strong> "complete [task number]"</p>
+          <p><strong>Examples:</strong></p>
+          <ul>
+            <li>"complete 1" - Marks first task done</li>
+            <li>"mark 2 done" - Marks second task done</li>
+          </ul>
+        </div>
+      </div>
+
+      <button class="close-help-btn" data-action="close-help">✓ Got it!</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
